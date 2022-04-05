@@ -1,10 +1,41 @@
 // server.js
 // where your node app starts
 
+var database_uri = "mongodb+srv://zetterburg40:Goalie29@cluster0.xbmwh.mongodb.net/url-shortener?retryWrites=true&w=majority";
+
 // init project
-require('dotenv').config();
+//require('dotenv').config();
 var express = require('express');
 var app = express();
+var bodyParser = require('body-parser');
+var http = require('http');
+const mongoose = require("mongoose");
+const mongo = require('mongodb');
+var Schema = mongoose.Schema;
+var cors = require('cors');
+
+/*mongoose.connect('mongodb://localhost:3000/url-shortener', { useNewURLParser: true })
+.then(() => {
+  let urlArray = [];
+
+  app.post("/api/shorturl/", function (req, res) {
+    //console.log(req, "<=");
+    urlArray.push(req.body.url);
+    let number = urlArray.length;
+    console.log(urlArray);
+    console.log(number);
+    res.send({
+      original: req.body.url,
+      url: "/api/shorturl/" + number
+    });
+  })
+
+})
+.catch(() => {
+  console.log("Database connection failed")
+});*/
+
+mongoose.connect(database_uri, { useNewURLParser: true });
 
 var port = process.env.PORT || 3000;
 
@@ -21,13 +52,24 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(bodyParser.json());
+
 // your first API endpoint...
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+//build a schema and model to store saved UrlShorten
+var urlData = mongoose.model('urlData', new Schema({
+  short_url: String,
+  original_url: String,
+  url: String
+}));
+
 app.get("/api/whoami", function (req, res) {
-  //console.log(req, "<=");
+  console.log(req, "<=");
   let ip = req.ip;
   const env = process.env;
   const language = req.headers['accept-language'];
@@ -41,6 +83,44 @@ app.get("/api/whoami", function (req, res) {
   });
 })
 
+let urlArray = [];
+
+app.post("/api/shorturl/", function (req, res) {
+  //console.log(req, "<=");
+  urlArray.push(req.body.url);
+  let number = urlArray.length;
+  console.log(urlArray);
+  console.log(number);
+
+  let newUrl = new urlData({
+    original_url: req.body.url,
+    url: number,
+    short_url: __dirname + "/api/shorturl/" + number
+  })
+
+  newUrl.save(function(err, doc) {
+    if (err) return console.log(err);
+    console.log("Url saved successfully");
+  });
+
+  res.json({
+    original_url: req.body.url,
+    url: number
+  });
+})
+
+app.get("/api/shorturl/:number", function(req, res) {
+  let userGeneratedShortLink = req.params.number;
+  urlData.find( {number: userGeneratedShortLink} ).then(function(foundUrls) {
+    let urlsToChange = foundUrls[0];
+    res.redirect(urlsToChange.original_url);
+  })
+  //console.log(urlsToChange);
+    /*res.json({
+      url: req.params.number,
+      userUrl: urlsToChange.short_url
+    })*/
+});
 
 
 // listen for requests :)
