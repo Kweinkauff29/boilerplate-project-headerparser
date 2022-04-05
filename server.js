@@ -120,8 +120,10 @@ app.post("/api/shorturl/", function (req, res) {
 
 app.get("/api/shorturl/:number", function(req, res) {
   let userGeneratedShortLink = req.params.number;
-  urlData.find( {number: userGeneratedShortLink} ).then(function(foundUrls) {
+  console.log(userGeneratedShortLink);
+  urlData.find( {url: userGeneratedShortLink} ).then(function(foundUrls) {
     let urlsToChange = foundUrls[0];
+    console.log(urlsToChange, "<=");
     res.redirect(urlsToChange.original_url);
   })
   //console.log(urlsToChange);
