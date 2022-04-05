@@ -114,7 +114,9 @@ app.post("/api/shorturl/", function (req, res) {
   }
 
   else {
-    console.log("not a url");
+    res.json({
+      status: "not a url"
+    })
   }
 })
 
