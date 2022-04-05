@@ -90,7 +90,7 @@ app.post("/api/shorturl/", function (req, res) {
   console.log(req.body.url, "<=");
   let httpTest = req.body.url;
 
-  if (httpTest.includes("https:")) {
+  if (httpTest.includes("http")) {
     urlArray.push(req.body.url);
     number = urlArray.length;
     console.log(urlArray);
