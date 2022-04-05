@@ -28,7 +28,7 @@ app.get("/api/hello", function (req, res) {
 
 app.get("/api/whoami", function (req, res) {
   //console.log(req, "<=");
-  let test = req.headers['x-forwarded-for'] ||
+  let ip = req.headers['x-forwarded-for'] ||
      req.socket.remoteAddress ||
      null;
   const env = process.env;
@@ -37,9 +37,9 @@ app.get("/api/whoami", function (req, res) {
   //console.log(test);
   //console.log("test");
   res.json({
-    "ipaddress": test,
-    "language": language,
-    "software": software
+    ipaddress: ip,
+    language: language,
+    software: software
   });
 })
 
