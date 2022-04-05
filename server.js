@@ -86,27 +86,36 @@ app.get("/api/whoami", function (req, res) {
 let urlArray = [];
 
 app.post("/api/shorturl/", function (req, res) {
-  //console.log(req, "<=");
-  urlArray.push(req.body.url);
-  let number = urlArray.length;
-  console.log(urlArray);
-  console.log(number);
+  let number;
+  console.log(req.body.url, "<=");
+  let httpTest = req.body.url;
 
-  let newUrl = new urlData({
-    original_url: req.body.url,
-    url: number,
-    short_url: __dirname + "/api/shorturl/" + number
-  })
+  if (httpTest.includes("https://www.")) {
+    urlArray.push(req.body.url);
+    number = urlArray.length;
+    console.log(urlArray);
+    console.log(number);
 
-  newUrl.save(function(err, doc) {
-    if (err) return console.log(err);
-    console.log("Url saved successfully");
-  });
+    let newUrl = new urlData({
+      original_url: req.body.url,
+      url: number,
+      short_url: __dirname + "/api/shorturl/" + number
+    })
 
-  res.json({
-    original_url: req.body.url,
-    url: number
-  });
+    newUrl.save(function(err, doc) {
+      if (err) return console.log(err);
+      console.log("Url saved successfully");
+    });
+
+    res.json({
+      original_url: req.body.url,
+      url: number
+    });
+  }
+
+  else {
+    console.log("not a url");
+  }
 })
 
 app.get("/api/shorturl/:number", function(req, res) {
