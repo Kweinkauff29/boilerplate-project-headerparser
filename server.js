@@ -31,12 +31,15 @@ app.get("/api/whoami", function (req, res) {
   let test = req.headers['x-forwarded-for'] ||
      req.socket.remoteAddress ||
      null;
+  const env = process.env;
+  const language = env.LANG || env.LANGUAGE || env.LC_ALL || env.LC_MESSAGES;
+  const software = req.headers['user-agent'];
   console.log(test);
   console.log("test");
   res.json({
     "ipaddress": test,
-    "language": test,
-    "software": test
+    "language": language,
+    "software": software
   });
 })
 
