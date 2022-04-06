@@ -14,27 +14,6 @@ const mongo = require('mongodb');
 var Schema = mongoose.Schema;
 var cors = require('cors');
 
-/*mongoose.connect('mongodb://localhost:3000/url-shortener', { useNewURLParser: true })
-.then(() => {
-  let urlArray = [];
-
-  app.post("/api/shorturl/", function (req, res) {
-    //console.log(req, "<=");
-    urlArray.push(req.body.url);
-    let number = urlArray.length;
-    console.log(urlArray);
-    console.log(number);
-    res.send({
-      original: req.body.url,
-      url: "/api/shorturl/" + number
-    });
-  })
-
-})
-.catch(() => {
-  console.log("Database connection failed")
-});*/
-
 mongoose.connect(database_uri, { useNewURLParser: true });
 
 const connection = mongoose.connection;
@@ -45,12 +24,10 @@ connection.on('error', console.error.bind(console, 'connection error:'));
 connection.once('open', async function () {
   const collection  = connection.db.collection("urldatas");
   collection.find({}).toArray(function(err, data){
-      //console.log(data); // it will print your collection data
       test = data;
-      //console.log(test);
       return test;
   });
-  console.log(test);
+  //console.log(test);
 });
 
 /*let test1  = connection.db.collection("urldatas");
@@ -89,14 +66,16 @@ var urlData = mongoose.model('urldatas', new Schema({
   url: String
 }, { collection: "urldatas"}));
 
+//build schema and model for user storage
+var newUser = mongoose.model('newusers', new Schema({
+  user: String
+}, { collection: "user" } ));
+
 app.get("/api/whoami", function (req, res) {
-  console.log(req, "<=");
   let ip = req.ip;
   const env = process.env;
   const language = req.headers['accept-language'];
   const software = req.headers['user-agent'];
-  //console.log(test);
-  //console.log("test");
   res.json({
     ipaddress: ip,
     language: language,
@@ -107,20 +86,56 @@ app.get("/api/whoami", function (req, res) {
 let urlArray = [];
 let number;
 
+app.post("/api/users", async (req, res) => {
+  //console.log(req.body.username);
+
+  let user = new newUser({
+    user: req.body.username
+  })
+
+//check to see if user already Exists
+  const userCheck = await newUser.find( { user: req.body.username } );
+  //console.log(userCheck);
+
+//if user already exists - tell user to use diffrent username  - Won't sync to db
+  if (userCheck.length > 0) {
+    console.log("User Already Exists");
+    res.redirect("/");
+  }
+
+  else {
+
+  user.save((err, doc) => {
+  if (err) return (err);
+
+  else {
+  console.log("Url saved successfully");
+  res.json({
+    user: req.body.username
+  });
+}
+
+});
+}
+});
+
+app.post("/api/users/:_id/exercises", (req, res) => {
+  console.log(req.params._id, "<=");
+  console.log(req.params.description, "<=");
+  console.log(req.params.duration, "<=");
+  console.log(req.params.date, "<=");
+});
+
 app.post("/api/shorturl/", async (req, res) => {
   //console.log(req.body.url, "<=");
   let httpTest = req.body.url;
 
   if (httpTest.includes("http")) {
-    //console.log(collection);
-    //console.log(urlData.length);
+
     urlArray.push(req.body.url);
 
     const urlTest = await urlData.find();
-    //console.log(urlTest);
     number = urlTest.length + 1;
-
-    console.log(number);
 
     let newUrl = new urlData({
       original_url: req.body.url,
