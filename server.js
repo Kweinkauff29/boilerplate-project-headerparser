@@ -37,6 +37,7 @@ var cors = require('cors');
 
 mongoose.connect(database_uri, { useNewURLParser: true });
 
+
 var port = process.env.PORT || 3000;
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
@@ -85,7 +86,7 @@ app.get("/api/whoami", function (req, res) {
 
 let urlArray = [];
 
-app.post("/api/shorturl/", function (req, res) {
+app.post("/api/shorturl/", (req, res) => {
   let number;
   console.log(req.body.url, "<=");
   let httpTest = req.body.url;
@@ -102,16 +103,16 @@ app.post("/api/shorturl/", function (req, res) {
       short_url: __dirname + "/api/shorturl/" + number
     })
 
-    newUrl.save(function(err, doc) {
-      if (err) return console.log(err);
-      console.log("Url saved successfully");
-    });
-
+  newUrl.save((err, doc) => {
+    if (err) return (err);
+    console.log("Url saved successfully");
     res.json({
       original_url: req.body.url,
       url: number
     });
   }
+  );
+}
 
   else {
     res.json({
@@ -120,19 +121,14 @@ app.post("/api/shorturl/", function (req, res) {
   }
 })
 
-app.get("/api/shorturl/:number", function(req, res) {
+app.get("/api/shorturl/:number", (req, res) => {
   let userGeneratedShortLink = req.params.number;
   console.log(userGeneratedShortLink);
-  urlData.find( {url: userGeneratedShortLink} ).then(function(foundUrls) {
+  urlData.find( {url: userGeneratedShortLink} ).then(foundUrls => {
     let urlsToChange = foundUrls[0];
     console.log(urlsToChange, "<=");
     res.redirect(urlsToChange.original_url);
-  })
-  //console.log(urlsToChange);
-    /*res.json({
-      url: req.params.number,
-      userUrl: urlsToChange.short_url
-    })*/
+  });
 });
 
 
