@@ -118,7 +118,6 @@ app.post("/api/shorturl/", async (req, res) => {
 
     const urlTest = await urlData.find();
     //console.log(urlTest);
-
     number = urlTest.length + 1;
 
     console.log(number);
@@ -134,7 +133,8 @@ app.post("/api/shorturl/", async (req, res) => {
     console.log("Url saved successfully");
     res.json({
       original_url: req.body.url,
-      url: number
+      url: number,
+      short_url: __dirname + "/api/shorturl/" + number
     });
   }
   );
