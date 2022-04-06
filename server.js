@@ -37,7 +37,28 @@ var cors = require('cors');
 
 mongoose.connect(database_uri, { useNewURLParser: true });
 
+const connection = mongoose.connection;
 
+let test;
+
+connection.on('error', console.error.bind(console, 'connection error:'));
+connection.once('open', async function () {
+
+  const collection  = connection.db.collection("urldatas");
+  collection.find({}).toArray(function(err, data){
+      //console.log(data); // it will print your collection data
+      test = data;
+      //console.log(test);
+      return test;
+  });
+  console.log(test);
+});
+
+/*let test1  = connection.db.collection("urldatas");
+let test = test1.find({}).toArray();
+
+console.log(test);
+*/
 var port = process.env.PORT || 3000;
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
@@ -63,11 +84,13 @@ app.get("/api/hello", function (req, res) {
 });
 
 //build a schema and model to store saved UrlShorten
-var urlData = mongoose.model('urlData', new Schema({
+var urlData = mongoose.model('urldatas', new Schema({
   short_url: String,
   original_url: String,
   url: String
 }));
+
+
 
 app.get("/api/whoami", function (req, res) {
   console.log(req, "<=");
@@ -87,13 +110,17 @@ app.get("/api/whoami", function (req, res) {
 let urlArray = [];
 
 app.post("/api/shorturl/", (req, res) => {
-  let number;
-  console.log(req.body.url, "<=");
+  //console.log(req.body.url, "<=");
   let httpTest = req.body.url;
 
   if (httpTest.includes("http")) {
+    //console.log(collection);
+    console.log(urlData.length);
     urlArray.push(req.body.url);
-    number = urlArray.length;
+    urlData.find({}, function(err, data) { console.log(err, data, data.length); });
+    let number = urlData.find({}, function(err, data) {
+      number = data.length + 1;
+      return number});
     console.log(urlArray);
     console.log(number);
 
