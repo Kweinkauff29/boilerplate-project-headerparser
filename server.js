@@ -43,7 +43,6 @@ let test;
 
 connection.on('error', console.error.bind(console, 'connection error:'));
 connection.once('open', async function () {
-
   const collection  = connection.db.collection("urldatas");
   collection.find({}).toArray(function(err, data){
       //console.log(data); // it will print your collection data
@@ -88,9 +87,7 @@ var urlData = mongoose.model('urldatas', new Schema({
   short_url: String,
   original_url: String,
   url: String
-}));
-
-
+}, { collection: "urldatas"}));
 
 app.get("/api/whoami", function (req, res) {
   console.log(req, "<=");
@@ -108,20 +105,22 @@ app.get("/api/whoami", function (req, res) {
 })
 
 let urlArray = [];
+let number;
 
-app.post("/api/shorturl/", (req, res) => {
+app.post("/api/shorturl/", async (req, res) => {
   //console.log(req.body.url, "<=");
   let httpTest = req.body.url;
 
   if (httpTest.includes("http")) {
     //console.log(collection);
-    console.log(urlData.length);
+    //console.log(urlData.length);
     urlArray.push(req.body.url);
-    urlData.find({}, function(err, data) { console.log(err, data, data.length); });
-    let number = urlData.find({}, function(err, data) {
-      number = data.length + 1;
-      return number});
-    console.log(urlArray);
+
+    const urlTest = await urlData.find();
+    //console.log(urlTest);
+
+    number = urlTest.length + 1;
+
     console.log(number);
 
     let newUrl = new urlData({
