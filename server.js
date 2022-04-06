@@ -125,7 +125,7 @@ app.post("/api/shorturl/", async (req, res) => {
     let newUrl = new urlData({
       original_url: req.body.url,
       url: number,
-      short_url: __dirname + "/api/shorturl/" + number
+      short_url: number
     })
 
   newUrl.save((err, doc) => {
@@ -133,8 +133,8 @@ app.post("/api/shorturl/", async (req, res) => {
     console.log("Url saved successfully");
     res.json({
       original_url: req.body.url,
-      url: number,
-      short_url: __dirname + "/api/shorturl/" + number
+      url: __dirname + "/api/shorturl" + number,
+      short_url: number
     });
   }
   );
