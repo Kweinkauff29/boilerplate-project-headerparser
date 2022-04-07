@@ -68,8 +68,18 @@ var urlData = mongoose.model('urldatas', new Schema({
 
 //build schema and model for user storage
 var newUser = mongoose.model('newusers', new Schema({
-  user: String
+  user: String,
+  description: String,
+  duration: String,
+  date: String
 }, { collection: "user" } ));
+
+var newExcersize = mongoose.model('updatesusers', new Schema({
+  user: String,
+  description: String,
+  duration: String,
+  date: String
+}))
 
 app.get("/api/whoami", function (req, res) {
   let ip = req.ip;
@@ -119,11 +129,37 @@ app.post("/api/users", async (req, res) => {
 }
 });
 
-app.post("/api/users/:_id/exercises", (req, res) => {
+app.post("/api/users/:_id/exercises", async (req, res) => {
   console.log(req.params._id, "<=");
-  console.log(req.params.description, "<=");
-  console.log(req.params.duration, "<=");
-  console.log(req.params.date, "<=");
+  console.log(req.body.description, "<=");
+  console.log(req.body.duration, "<=");
+  console.log(req.body.date, "<=");
+
+  let users = new newExcersize({
+    user: req.params._id,
+    description: req.body.description,
+    duration: req.body.duration,
+    date: req.body.date
+  })
+
+  const accCheck = await newUser.find( { user: req.params._id } );
+
+  if (accCheck.length > 0) {
+    users.save((err, doc) => {
+      if (err) return (err);
+      res.json({
+        user: req.params._id,
+        description: req.body.description,
+        duration: req.body.duration,
+        date: req.body.date
+      })
+    })
+
+}
+  else {
+    return console.log("user doesn't exist");
+    res.redirect("/");
+  }
 });
 
 app.post("/api/shorturl/", async (req, res) => {
