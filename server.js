@@ -218,14 +218,10 @@ app.get("/api/users/:_id/logs", async(req, res) => {
 
 app.get("/api/users", async(req, res) => {
   let newTest = await newUser.find( {} );
-  var log = await newExcersize.find( {} );
+  var logs = await newExcersize.find({});
 
 
-  res.json({
-    log
-  })
-
-  //console.log(newTest, "<=");
+  res.json(logs)
 })
 
 app.post("/api/shorturl/", async (req, res) => {
