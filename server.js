@@ -168,21 +168,14 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
 app.get("/api/users", async(req, res) => {
   let newTest = await newUser.find( {} );
-  var excTest = await newExcersize.find( {} );
-  var id = excTest[0]._id;
-  var user = excTest[0].username;
-  var desc = excTest[0].description;
-  var dur = excTest[0].duration;
-  var date = excTest[0].date;
-  console.log(newTest, "<=");
-  //console.log(arrays, "<=");
+  var log = await newExcersize.find( {} );
+
+
   res.json({
-    _id: id,
-    username: user,
-    description: desc,
-    duration: dur,
-    date: date
+    log
   })
+
+  //console.log(newTest, "<=");
 })
 
 app.post("/api/shorturl/", async (req, res) => {
