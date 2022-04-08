@@ -121,10 +121,13 @@ app.post("/api/users", async (req, res) => {
   else {
   console.log("Url saved successfully");
   console.log(req, "<=");
-  const idCheck = await newUser.find( { username: req.body.username } );
+  const idCheck = await newUser.findOne( { username: req.body.username } );
   console.log(idCheck);
+  var id = idCheck._id;
+  console.log(id);
   res.json({
-    idCheck
+    username: req.body.username,
+    _id: id
   });
 }
 
