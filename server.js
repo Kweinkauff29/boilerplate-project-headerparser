@@ -136,7 +136,6 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
   let users = new newExcersize({
     username: req.params._id,
-    _id: req.params._id,
     description: req.body.description,
     duration: req.body.duration,
     date: req.body.date
@@ -145,12 +144,12 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
   const accCheck = await newUser.find( { username: req.params._id } );
 
   if (accCheck.length > 0) {
-    users.save((err, doc) => {
+    users.save(async (err, doc) => {
       if (err) return (err);
+      const excLog = await newUser.find( { username: req.params._id } );
       console.log("Excersises Saved!")
       res.json({
         username: req.params._id,
-        __id: req.params._id,
         description: req.body.description,
         duration: req.body.duration,
         date: req.body.date
@@ -169,6 +168,9 @@ app.get("/api/users", async(req, res) => {
   let excTest = await newExcersize.find( {} );
   console.log(newTest, "<=");
   console.log(excTest, "<=");
+  res.json({
+    excTest
+  })
 })
 
 app.post("/api/shorturl/", async (req, res) => {
