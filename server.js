@@ -69,6 +69,7 @@ var urlData = mongoose.model('urldatas', new Schema({
 //build schema and model for user storage
 var newUser = mongoose.model('newusers', new Schema({
   username: String,
+  __id: String,
   description: String,
   duration: String,
   date: String
@@ -76,6 +77,7 @@ var newUser = mongoose.model('newusers', new Schema({
 
 var newExcersize = mongoose.model('updatesusers', new Schema({
   username: String,
+  __id: String,
   description: String,
   duration: String,
   date: String}, { collection: "excersises" }))
@@ -99,7 +101,8 @@ app.post("/api/users", async (req, res) => {
   //console.log(req.body.username);
 
   let user = new newUser({
-    username: req.body.username
+    username: req.body.username,
+    __id: req.body.username
   })
 
 //check to see if user already Exists
@@ -132,6 +135,7 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
   let users = new newExcersize({
     username: req.params._id,
+    __id: req.params._id,
     description: req.body.description,
     duration: req.body.duration,
     date: req.body.date
@@ -142,8 +146,10 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
   if (accCheck.length > 0) {
     users.save((err, doc) => {
       if (err) return (err);
+      console.log("Excersises Saved!")
       res.json({
         username: req.params._id,
+        __id: req.params._id,
         description: req.body.description,
         duration: req.body.duration,
         date: req.body.date
