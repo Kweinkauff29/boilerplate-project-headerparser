@@ -137,6 +137,15 @@ app.post("/api/users", async (req, res) => {
 
 app.post("/api/users/:_id/exercises", async (req, res) => {
 
+  const accCheck = await newUser.find( { username: req.params._id } );
+  //console.log(req, "<=");
+
+  var date = req.body.date;
+
+  console.log(date);
+
+  var today;
+
   let users = new newExcersize({
     username: req.params._id,
     description: req.body.description,
@@ -144,27 +153,60 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
     date: req.body.date
   })
 
-  const accCheck = await newUser.find( { username: req.params._id } );
 
   if (accCheck.length > 0) {
     users.save(async (err, doc) => {
-      if (err) return (err);
-      const excLog = await newUser.find( { username: req.params._id } );
-      console.log("Excersises Saved!")
-      res.json({
-        username: req.params._id,
-        description: req.body.description,
-        duration: req.body.duration,
-        date: req.body.date
-      })
+      if (date.length > 10 || date.length < 10) {
+        today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+
+        today = yyyy + '-' + mm + '-' + dd;
+
+        const excLog = await newUser.find( { username: req.params._id } );
+        console.log("Excersises Saved!")
+
+        res.json({
+          username: req.params._id,
+          description: req.body.description,
+          duration: req.body.duration,
+          date: today
+        })
+      }
+
+      else {
+        today = req.body.date;
+        const excLog = await newUser.find( { username: req.params._id } );
+        console.log("Excersises Saved!")
+
+        res.json({
+          username: req.params._id,
+          description: req.body.description,
+          duration: req.body.duration,
+          date: today
+        })
+      }
+
     })
 
 }
+
   else {
     return console.log("user doesn't exist");
     res.redirect("/");
   }
 });
+
+app.get("/api/users/:_id/logs", async(req, res) => {
+  //console.log(req, "<=");
+  const logs = await newExcersize.find( { username: req.params._id } );
+  console.log(logs);
+
+  res.json({
+    logs
+  })
+})
 
 app.get("/api/users", async(req, res) => {
   let newTest = await newUser.find( {} );
