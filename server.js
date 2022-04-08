@@ -102,12 +102,10 @@ app.post("/api/users", async (req, res) => {
 
   let user = new newUser({
     username: req.body.username,
-    __id: req.body.username
   })
 
 //check to see if user already Exists
   const userCheck = await newUser.find( { username: req.body.username } );
-  //console.log(userCheck);
 
 //if user already exists - tell user to use diffrent username  - Won't sync to db
   if (userCheck.length > 0) {
@@ -117,13 +115,16 @@ app.post("/api/users", async (req, res) => {
 
   else {
 
-  user.save((err, doc) => {
+  user.save(async (err, doc) => {
   if (err) return (err);
 
   else {
   console.log("Url saved successfully");
+  console.log(req, "<=");
+  const idCheck = await newUser.find( { username: req.body.username } );
+  console.log(idCheck);
   res.json({
-    username: req.body.username
+    idCheck
   });
 }
 
@@ -135,7 +136,7 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
   let users = new newExcersize({
     username: req.params._id,
-    __id: req.params._id,
+    _id: req.params._id,
     description: req.body.description,
     duration: req.body.duration,
     date: req.body.date
