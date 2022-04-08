@@ -68,18 +68,17 @@ var urlData = mongoose.model('urldatas', new Schema({
 
 //build schema and model for user storage
 var newUser = mongoose.model('newusers', new Schema({
-  user: String,
+  username: String,
   description: String,
   duration: String,
   date: String
 }, { collection: "user" } ));
 
 var newExcersize = mongoose.model('updatesusers', new Schema({
-  user: String,
+  username: String,
   description: String,
   duration: String,
-  date: String
-}))
+  date: String}, { collection: "excersises" }))
 
 app.get("/api/whoami", function (req, res) {
   let ip = req.ip;
@@ -100,11 +99,11 @@ app.post("/api/users", async (req, res) => {
   //console.log(req.body.username);
 
   let user = new newUser({
-    user: req.body.username
+    username: req.body.username
   })
 
 //check to see if user already Exists
-  const userCheck = await newUser.find( { user: req.body.username } );
+  const userCheck = await newUser.find( { username: req.body.username } );
   //console.log(userCheck);
 
 //if user already exists - tell user to use diffrent username  - Won't sync to db
@@ -121,7 +120,7 @@ app.post("/api/users", async (req, res) => {
   else {
   console.log("Url saved successfully");
   res.json({
-    user: req.body.username
+    username: req.body.username
   });
 }
 
@@ -130,25 +129,21 @@ app.post("/api/users", async (req, res) => {
 });
 
 app.post("/api/users/:_id/exercises", async (req, res) => {
-  console.log(req.params._id, "<=");
-  console.log(req.body.description, "<=");
-  console.log(req.body.duration, "<=");
-  console.log(req.body.date, "<=");
 
   let users = new newExcersize({
-    user: req.params._id,
+    username: req.params._id,
     description: req.body.description,
     duration: req.body.duration,
     date: req.body.date
   })
 
-  const accCheck = await newUser.find( { user: req.params._id } );
+  const accCheck = await newUser.find( { username: req.params._id } );
 
   if (accCheck.length > 0) {
     users.save((err, doc) => {
       if (err) return (err);
       res.json({
-        user: req.params._id,
+        username: req.params._id,
         description: req.body.description,
         duration: req.body.duration,
         date: req.body.date
@@ -161,6 +156,13 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
     res.redirect("/");
   }
 });
+
+app.get("/api/users", async(req, res) => {
+  let newTest = await newUser.find( {} );
+  let excTest = await newExcersize.find( {} );
+  console.log(newTest, "<=");
+  console.log(excTest, "<=");
+})
 
 app.post("/api/shorturl/", async (req, res) => {
   //console.log(req.body.url, "<=");
