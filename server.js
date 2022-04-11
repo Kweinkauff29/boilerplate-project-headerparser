@@ -137,8 +137,10 @@ app.post("/api/users", async (req, res) => {
 
 app.post("/api/users/:_id/exercises", async (req, res) => {
 
-  const accCheck = await newUser.find( { username: req.params._id } );
+  const accCheck = await newUser.find( { _id: req.params._id } );
   //console.log(req, "<=");
+
+  console.log(accCheck);
 
   var date = req.body.date;
 
@@ -159,28 +161,31 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
         var todayStr = today.toString();
         console.log(todayStr, "this");
 
-        const excLog = await newUser.find( { username: req.params._id } );
+        const excLog = await newUser.find( { _id: req.params._id } );
         //await user.insertOne( { username: req.params._id}, {$set: {description: req.body.description,
         //duration: req.body.duration,
         //date: today}} );
-        console.log("Excersises Saved!")
+        console.log("Excersises Saved! - Today's Date")
 
         let user = new newExcersize ({
-          username: req.params._id,
+          username: excLog.username,
           description: req.body.description,
           duration: req.body.duration,
           date: today
         })
 
+        let userName = excLog[0].username;
+
         user.save({
-          username: req.params._id,
+          _id: req.params._id,
           description: req.body.description,
           duration: req.body.duration,
           date: todayStr
         })
 
         res.json({
-          username: req.params._id,
+          _id: req.params._id,
+          username: userName,
           description: req.body.description,
           duration: req.body.duration,
           date: today
@@ -189,8 +194,10 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
       else {
 
+        const excLog = await newUser.find( { _id: req.params._id } );
+
         let user = new newExcersize ({
-          username: req.params._id,
+          username: excLog.username,
           description: req.body.description,
           duration: req.body.duration,
           date: req.body.date
@@ -199,21 +206,19 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
         today = req.body.date;
         console.log(today, "that");
 
-        const excLog = await newUser.find( { username: req.params._id } );
-        //await user.insertOne( { username: req.params._id }, {$set: {description: req.body.description,
-        //duration: req.body.duration,
-        //date: today}} );
-        console.log("Excersises Saved!")
+        console.log("Excersises Saved! - Custom Date")
+
+        let userName = excLog[0].username;
 
         user.save({
-          username: req.params._id,
           description: req.body.description,
           duration: req.body.duration,
           date: today
         })
 
         res.json({
-          username: req.params._id,
+          _id: req.params._id,
+          username: userName,
           description: req.body.description,
           duration: req.body.duration,
           date: today
