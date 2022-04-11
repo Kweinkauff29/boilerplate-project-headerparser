@@ -184,11 +184,11 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
         })
 
         res.json({
-          _id: req.params._id,
           username: userName,
           description: req.body.description,
           duration: req.body.duration,
-          date: today
+          date: today,
+          _id: req.params._id
         })
       }
 
@@ -217,11 +217,11 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
         })
 
         res.json({
-          _id: req.params._id,
           username: userName,
           description: req.body.description,
           duration: req.body.duration,
-          date: today
+          date: today,
+          _id: req.params._id
         })
       }
 
