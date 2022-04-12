@@ -235,12 +235,12 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
 app.get("/api/users/:_id/logs", async(req, res) => {
   //console.log(req, "<=");
-  var logs = await newExcersize.find( { username: req.params._id } );
-  var count = await newExcersize.find( { username: req.params._id } ).count();
-  var id = logs[0]._id
+  var logs = await newExcersize.find( { username: req.params.username } );
+  var count = await newExcersize.find( { } ).count();
+  var id = req.params._id
   var username = req.params._id;
 
-  console.log(count);
+  console.log(logs);
 
   var fullLog = [];
 
