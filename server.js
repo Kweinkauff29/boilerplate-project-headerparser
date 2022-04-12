@@ -164,10 +164,10 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
         const excLog = await newUser.find( { _id: req.params._id } );
         //await user.insertOne( { username: req.params._id}, {$set: {description: req.body.description,
         //duration: req.body.duration,
-        //date: today}} );
+        //date: today}} )
         console.log("Excersises Saved! - Today's Date")
 
-        let user = new newExcersize ({
+        let userExc = new newExcersize ({
           username: excLog.username,
           description: req.body.description,
           duration: req.body.duration,
@@ -176,8 +176,9 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
         let userName = excLog[0].username;
 
-        user.save({
+        userExc.save({
           _id: req.params._id,
+          username: userName,
           description: req.body.description,
           duration: req.body.duration,
           date: todayStr
@@ -196,8 +197,9 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
         const excLog = await newUser.find( { _id: req.params._id } );
 
-        let user = new newExcersize ({
+        let userExc = new newExcersize ({
           username: excLog.username,
+          _id: req.params._id,
           description: req.body.description,
           duration: req.body.duration,
           date: req.body.date
@@ -210,8 +212,10 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
         let userName = excLog[0].username;
 
-        user.save({
+        userExc.save({
           description: req.body.description,
+          id: req.params._id,
+          username: userName,
           duration: req.body.duration,
           date: today
         })
@@ -234,13 +238,23 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 });
 
 app.get("/api/users/:_id/logs", async(req, res) => {
-  //console.log(req, "<=");
-  var logs = await newExcersize.find( { username: req.params.username } );
-  var count = await newExcersize.find( { } ).count();
+
+  let userExc = new newExcersize ({
+    username: req.params.username,
+    _id: req.params._id,
+    description: req.body.description,
+    duration: req.body.duration,
+    date: req.body.date
+  })
+
+  console.log(req, "<=");
+  var logs = await newExcersize.find( { _id: req.params._id } );
+  var count = await newExcersize.find( { _id: req.params._id } ).count();
   var id = req.params._id
-  var username = req.params._id;
+  var username = req.params.username;
 
   console.log(logs);
+  console.log(req.params);
 
   var fullLog = [];
 
@@ -254,13 +268,14 @@ app.get("/api/users/:_id/logs", async(req, res) => {
       }
     })
 
-    console.log(newLog);
+    //console.log(newLog);
 
   }
 
 
   res.json({
-    username: req.params._id,
+    username: req.params.username,
+    _id: req.params._id,
     count: count,
     _id: id,
     log: logs
