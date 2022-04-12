@@ -153,12 +153,13 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
       if (date.length > 10 || date.length < 10) {
 
         today = new Date();
+        var testStr = today.toDateString();
         var dd = String(today.getDate()).padStart(2, '0');
         var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
         var yyyy = today.getFullYear();
 
         today = yyyy + '-' + mm + '-' + dd;
-        var todayStr = today.toString();
+        //var todayStr = today.toString().toDateString()
         console.log(todayStr, "this");
 
         const excLog = await newUser.find( { _id: req.params._id } );
@@ -171,7 +172,7 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
           username: excLog.username,
           description: req.body.description,
           duration: req.body.duration,
-          date: today
+          date: testStr
         })
 
         let userName = excLog[0].username;
@@ -181,14 +182,14 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
           username: userName,
           description: req.body.description,
           duration: req.body.duration,
-          date: todayStr
+          date: testStr
         })
 
         res.json({
           username: userName,
           description: req.body.description,
           duration: req.body.duration,
-          date: today,
+          date: testStr,
           _id: req.params._id
         })
       }
@@ -197,15 +198,18 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
         const excLog = await newUser.find( { _id: req.params._id } );
 
+        today = req.body.date
+        var date = new Date(today)
+        var todayStr = date.toDateString()
+
         let userExc = new newExcersize ({
           username: excLog.username,
           _id: req.params._id,
           description: req.body.description,
           duration: req.body.duration,
-          date: req.body.date
+          date: todayStr
         })
 
-        today = req.body.date;
         console.log(today, "that");
 
         console.log("Excersises Saved! - Custom Date")
@@ -217,14 +221,14 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
           id: req.params._id,
           username: userName,
           duration: req.body.duration,
-          date: today
+          date: todayStr
         })
 
         res.json({
           username: userName,
           description: req.body.description,
           duration: req.body.duration,
-          date: today,
+          date: todayStr,
           _id: req.params._id
         })
       }
@@ -247,7 +251,7 @@ app.get("/api/users/:_id/logs", async(req, res) => {
     date: req.body.date
   })
 
-  console.log(req, "<=");
+  //console.log(req, "<=");
   var logs = await newExcersize.find( { _id: req.params._id } );
   var count = await newExcersize.find( { _id: req.params._id } ).count();
   var id = req.params._id
