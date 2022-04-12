@@ -14,6 +14,7 @@ const mongo = require('mongodb');
 var Schema = mongoose.Schema;
 var cors = require('cors');
 
+
 mongoose.connect(database_uri, { useNewURLParser: true });
 
 const connection = mongoose.connection;
@@ -72,15 +73,17 @@ var newUser = mongoose.model('newusers', new Schema({
   __id: String,
   description: String,
   duration: String,
-  date: String
-}, { collection: "user" } ));
+  date: String,
+  versionKey: false
+}, { collection: "user" }, { versionKey: false } ));
 
 var newExcersize = mongoose.model('updatesusers', new Schema({
   username: String,
   __id: String,
   description: String,
   duration: String,
-  date: String}, { collection: "excersises" }))
+  date: String,
+  versionKey: false}, { collection: "excersises" }, { versionKey: false }))
 
 app.get("/api/whoami", function (req, res) {
   let ip = req.ip;
@@ -102,6 +105,7 @@ app.post("/api/users", async (req, res) => {
 
   let user = new newUser({
     username: req.body.username,
+    versionKey: false
   })
 
 //check to see if user already Exists
@@ -172,13 +176,13 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
           username: excLog.username,
           description: req.body.description,
           duration: req.body.duration,
-          date: testStr
+          date: testStr,
+          versionKey: false
         })
 
         let userName = excLog[0].username;
 
         userExc.save({
-          _id: req.params._id,
           username: userName,
           description: req.body.description,
           duration: req.body.duration,
@@ -204,10 +208,10 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
         let userExc = new newExcersize ({
           username: excLog.username,
-          _id: req.params._id,
           description: req.body.description,
           duration: req.body.duration,
-          date: todayStr
+          date: todayStr,
+          versionKey: false
         })
 
         console.log(today, "that");
@@ -218,7 +222,6 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
         userExc.save({
           description: req.body.description,
-          id: req.params._id,
           username: userName,
           duration: req.body.duration,
           date: todayStr
@@ -248,7 +251,8 @@ app.get("/api/users/:_id/logs", async(req, res) => {
     _id: req.params._id,
     description: req.body.description,
     duration: req.body.duration,
-    date: req.body.date
+    date: req.body.date,
+    versionKey: false
   })
 
   //console.log(req, "<=");
