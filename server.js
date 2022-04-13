@@ -280,18 +280,17 @@ app.get("/api/users/:_id/logs", async(req, res) => {
         duration: obj.duration
       }
     })
-
-    //console.log(newLog);
-
   }
+
+  console.log(newLog);
+
 
 
   res.json({
-    username: req.params.username,
+    username: userTest,
     _id: req.params._id,
     count: count,
-    _id: id,
-    log: logs
+    log: newLog
   })
 })
 
