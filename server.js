@@ -282,9 +282,9 @@ app.get("/api/users/:_id/logs", async(req, res) => {
 
     var newLog = logs.map( (obj) => {
       return {
-        date: obj.date,
         description: obj.description,
-        duration: obj.duration
+        duration: obj.duration,
+        date: obj.date,
       }
     })
   }
