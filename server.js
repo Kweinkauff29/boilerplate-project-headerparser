@@ -181,7 +181,7 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
           username: userName,
           description: req.body.description,
           duration: newDuration,
-          date: testStr,
+          date: today,
           versionKey: false
         })
 
@@ -189,7 +189,7 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
           username: userName,
           description: req.body.description,
           duration: newDuration,
-          date: testStr
+          date: today
         })
 
         res.json({
@@ -218,7 +218,7 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
           username: userName,
           description: req.body.description,
           duration: newDuration,
-          date: todayStr,
+          date: today,
           versionKey: false
         })
 
@@ -230,7 +230,7 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
           description: req.body.description,
           username: userName,
           duration: newDuration,
-          date: todayStr
+          date: today
         })
 
         res.json({
@@ -252,6 +252,8 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
 app.get("/api/users/:_id/logs", async(req, res) => {
 
+  const { from, to, limit } = req.query;
+
   let userExc = new newExcersize ({
     username: req.params.username,
     _id: req.params._id,
@@ -261,35 +263,67 @@ app.get("/api/users/:_id/logs", async(req, res) => {
     versionKey: false
   })
 
-  var user = await newUser.find( {_id: req.params } );
+  var user = await newUser.find( { _id: req.params } );
+
+  //console.log(user);
 
   var userTest = user[0].username;
   //console.log(user[0].username);
 
+  let filter = {
+    username: userTest
+  }
 
-  var logs = await newExcersize.find( { username: userTest }, {} );
-  var count = await newExcersize.find( { username: userTest } ).count();
-  var newCount = parseInt(count);
+  //console.log(filter);
+
+  let dateObj = {}
+
+  let newFrom = new Date(from)
+  let newTo = new Date(to)
+
+  if(from) {
+    dateObj["$gte"] = newFrom.toISOString()
+  }
+  if(to){
+    dateObj["$lte"] = newTo.toISOString()
+  }
+
+  if(from || to) {
+    filter.date = dateObj;
+  }
+
+  let nonNullLimit = limit ?? 500;
+
+  console.log(dateObj)
+  console.log(filter, "<= filter");
+  console.log(newFrom.toDateString())
+  console.log(newTo.toDateString())
+
+
+  var logs = await newExcersize.find( filter ).limit(+nonNullLimit);
+  var count = await newExcersize.find( filter ).count();
   var id = req.params._id
   var username = req.params.username;
 
-  console.log(logs);
+  console.log(logs, "<= this is logs");
   //console.log(req.params);
 
   var fullLog = [];
 
   for(let i = 0; i < count; i++){
 
-    var newLog = logs.map( (obj) => {
-      return {
+    var newLog = logs.map( (obj) => ({
         description: obj.description,
         duration: obj.duration,
-        date: obj.date,
-      }
-    })
+        date: obj.date
+    }))
   }
 
-  console.log(newLog);
+  //console.log(newLog);
+
+  //var count = newLog.length;
+  var newCount = parseInt(count);
+  //console.log(newLog);
 
 
 
