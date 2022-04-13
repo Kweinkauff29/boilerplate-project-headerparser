@@ -174,10 +174,13 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
 
         let userName = excLog[0].username;
 
+        var duration = req.body.duration;
+        var newDuration = parseInt(duration);
+
         let userExc = new newExcersize ({
           username: userName,
           description: req.body.description,
-          duration: req.body.duration,
+          duration: newDuration,
           date: testStr,
           versionKey: false
         })
@@ -185,14 +188,14 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
         userExc.save({
           username: userName,
           description: req.body.description,
-          duration: req.body.duration,
+          duration: newDuration,
           date: testStr
         })
 
         res.json({
           username: userName,
           description: req.body.description,
-          duration: req.body.duration,
+          duration: newDuration,
           date: testStr,
           _id: req.params._id
         })
@@ -206,12 +209,15 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
         var date = new Date(today)
         var todayStr = date.toDateString()
 
+        var duration = req.body.duration;
+        var newDuration = parseInt(duration);
+
         let userName = excLog[0].username;
 
         let userExc = new newExcersize ({
           username: userName,
           description: req.body.description,
-          duration: req.body.duration,
+          duration: newDuration,
           date: todayStr,
           versionKey: false
         })
@@ -223,14 +229,14 @@ app.post("/api/users/:_id/exercises", async (req, res) => {
         userExc.save({
           description: req.body.description,
           username: userName,
-          duration: req.body.duration,
+          duration: newDuration,
           date: todayStr
         })
 
         res.json({
           username: userName,
           description: req.body.description,
-          duration: req.body.duration,
+          duration: newDuration,
           date: todayStr,
           _id: req.params._id
         })
@@ -263,6 +269,7 @@ app.get("/api/users/:_id/logs", async(req, res) => {
 
   var logs = await newExcersize.find( { username: userTest }, {} );
   var count = await newExcersize.find( { username: userTest } ).count();
+  var newCount = parseInt(count);
   var id = req.params._id
   var username = req.params.username;
 
@@ -288,7 +295,7 @@ app.get("/api/users/:_id/logs", async(req, res) => {
 
   res.json({
     username: userTest,
-    count: count,
+    count: newCount,
     _id: req.params._id,
     log: newLog
   })
