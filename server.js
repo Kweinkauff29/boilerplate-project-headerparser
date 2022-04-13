@@ -72,7 +72,7 @@ var newUser = mongoose.model('newusers', new Schema({
   username: String,
   __id: String,
   description: String,
-  duration: String,
+  duration: Number,
   date: String,
   versionKey: false
 }, { collection: "user" }, { versionKey: false } ));
@@ -81,7 +81,7 @@ var newExcersize = mongoose.model('updatesusers', new Schema({
   username: String,
   __id: String,
   description: String,
-  duration: String,
+  duration: Number,
   date: String,
   versionKey: false}, { collection: "excersises" }, { versionKey: false }))
 
@@ -288,8 +288,8 @@ app.get("/api/users/:_id/logs", async(req, res) => {
 
   res.json({
     username: userTest,
-    _id: req.params._id,
     count: count,
+    _id: req.params._id,
     log: newLog
   })
 })
